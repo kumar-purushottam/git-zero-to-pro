@@ -32,7 +32,7 @@ window.MODULES = [
     title: "Your first repo: init, add, commit",
     level: "Beginner",
     minutes: 25,
-    status: "soon"
+    status: "ready"
   },
   {
     id: "04",

@@ -6,6 +6,7 @@ Format: `- <what changed> (<branch name>)`
 
 ## Unreleased
 
+- Module 03: Your first repo: init, add, commit (module/03-first-repo)
 - Fix: newly merged modules appear right away instead of after a 10-minute cache (fix/fresh-module-registry)
 - Module 01: What is Git and GitHub (module/01-intro)
 - Project skeleton: home page, shared styles, module template and contribution rules (main)
