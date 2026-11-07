@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>01 · What is Git and GitHub · Git Zero to Pro</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script>try{var t=localStorage.getItem("gzp-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-root=".." data-module="01">
+  <header class="site-header" id="site-header"></header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="content">
+      <header class="module-header">
+        <p class="eyebrow" data-auto></p>
+        <h1>What is Git and GitHub</h1>
+        <p class="lead">Understand what Git does, how it is different from GitHub, and the few words every developer uses every day.</p>
+      </header>
+
+      <section class="goals" id="goals">
+        <h2>Learning goals</h2>
+        <ul>
+          <li>Explain what version control is and why every team uses it</li>
+          <li>Tell the difference between Git and GitHub</li>
+          <li>Name the three places your work lives: working directory, staging area, repository</li>
+          <li>Know what a commit, a branch and <code>main</code> are</li>
+          <li>Check that Git is installed on your computer</li>
+        </ul>
+      </section>
+
+      <section class="concept" id="concept">
+        <h2>The idea</h2>
+        <p>You have probably seen files named <code>report_final.docx</code>, <code>report_final_v2.docx</code> and <code>report_REAL_final.docx</code>. That is version control done by hand, and it breaks fast. You forget which file is newest, and two people editing at once overwrite each other.</p>
+        <p><strong>Version control</strong> is a system that records every change to your project, who made it, and why. You can go back to any earlier version at any time. It is a time machine for a folder.</p>
+
+        <h3>Git: the tool on your computer</h3>
+        <p><strong>Git</strong> is a free program that runs on your computer. When you tell it to, Git takes a <strong>snapshot</strong> of your project. That snapshot is called a <strong>commit</strong>. Commits form a chain, so you can see the full history and return to any point. Git works completely offline.</p>
+
+        <h3>GitHub: the website for sharing</h3>
+        <p><strong>GitHub</strong> is a website that stores copies of Git projects online. It adds tools for teams: pull requests, code review, issues, and free website hosting (this site runs on GitHub Pages). Think of Git as a camera that takes photos, and GitHub as the shared album where your team keeps them and comments on them.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>Git</th><th>GitHub</th></tr></thead>
+            <tbody>
+              <tr><td>What it is</td><td>A program (a tool)</td><td>A website (a service)</td></tr>
+              <tr><td>Where it runs</td><td>On your computer</td><td>In the cloud</td></tr>
+              <tr><td>Needs internet?</td><td>No</td><td>Yes</td></tr>
+              <tr><td>Main job</td><td>Record the history of your files</td><td>Share projects and work as a team</td></tr>
+              <tr><td>Alternatives</td><td>Mercurial, SVN (rare today)</td><td>GitLab, Bitbucket</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>The three places your work lives</h3>
+        <p>A change does not go straight into history. It moves through three places, and you decide when it moves:</p>
+<pre class="graph">
+  Working directory      Staging area         Repository
+  files you edit   ───►  next snapshot  ───►  saved history
+                 <span class="b">git add</span>             <span class="m">git commit</span>
+</pre>
+        <p>The <strong>working directory</strong> is your normal folder. The <strong>staging area</strong> is a waiting room where you pick which changes go into the next snapshot. The <strong>repository</strong> (or "repo") is the history Git has saved.</p>
+
+        <h3>Branches and main</h3>
+        <p>A <strong>branch</strong> is a separate line of work. You can try something new on a branch without touching the official version. When the work is ready, you <strong>merge</strong> it back. The official branch is usually called <code>main</code>.</p>
+<pre class="graph">
+<span class="m">main</span>      A───B───C───────F
+               \         /
+<span class="b">feature</span>         D───────E
+<span class="d">                          F = merge commit: feature joins main</span>
+</pre>
+        <p class="tip">This page was written on a branch called <code>module/01-intro</code> and merged into <code>main</code> through a pull request. You'll see exactly how in the lab.</p>
+
+        <h3>Words you'll hear every day</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Word</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>Repository (repo)</td><td>A project folder plus its full Git history</td></tr>
+              <tr><td>Commit</td><td>One saved snapshot, with a message saying what changed</td></tr>
+              <tr><td>Branch</td><td>A separate line of work inside the same repo</td></tr>
+              <tr><td><code>main</code></td><td>The default, official branch</td></tr>
+              <tr><td>Merge</td><td>Combine one branch's work into another</td></tr>
+              <tr><td>Remote</td><td>A copy of the repo on another computer, like GitHub</td></tr>
+              <tr><td>Push / Pull</td><td>Send your commits to the remote / bring new commits from it</td></tr>
+              <tr><td>Pull request (PR)</td><td>A request on GitHub to merge your branch, so others can review it first</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="commands" id="commands">
+        <h2>Commands</h2>
+        <div class="cmd-item">
+<pre class="cmd"><code>git --version</code></pre>
+          <p>Shows which version of Git is installed. If you see "command not found", Git is not installed yet (Module 02 fixes that).</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git status</code></pre>
+          <p>Asks Git "what is going on in this folder?" You will run this more than any other command.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git help commit      <span class="c"># full manual for one command</span>
+git commit -h        <span class="c"># short summary of its options</span></code></pre>
+          <p>Built-in help. Every Git command has a manual page, and it works offline.</p>
+        </div>
+      </section>
+
+      <section class="lab" id="lab">
+        <h2>Hands-on lab</h2>
+        <p>Work in a scratch folder so experiments never touch a real project. Open a terminal.</p>
+        <ol class="steps">
+          <li>
+            Check that Git is installed.
+<pre class="cmd"><code>git --version
+<span class="o">git version 2.43.0</span></code></pre>
+            <p class="expect">A line starting with <code>git version</code>. Any version 2.28 or newer is fine.</p>
+          </li>
+          <li>
+            Make a playground folder for this course and step into it.
+<pre class="cmd"><code>mkdir -p ~/git-playground/m01
+cd ~/git-playground/m01</code></pre>
+            <p class="expect">No output. That's normal for these commands.</p>
+          </li>
+          <li>
+            Ask Git about this folder.
+<pre class="cmd"><code>git status
+<span class="o">fatal: not a git repository (or any of the parent directories): .git</span></code></pre>
+            <p class="expect">An error, and that is the lesson. Git only tracks folders you have told it to track. You will do that with <code>git init</code> in Module 03.</p>
+          </li>
+          <li>
+            Look at a real Git history: this website's. Open the <a data-repo-link data-repo-path="/commits/main" href="#" target="_blank" rel="noopener">commits on main</a> and find the very first one, <code>chore: create project skeleton</code>.
+            <p class="expect">A list of commits, each with a message, an author and a short ID like <code>81238f4</code>.</p>
+          </li>
+          <li>
+            Now open the <a data-repo-link data-repo-path="/pulls?q=is%3Apr+is%3Aclosed" href="#" target="_blank" rel="noopener">closed pull requests</a> and open the one that added Module 01. Look at the <strong>Files changed</strong> tab.
+            <p class="expect">The exact lines that were added to create this page, reviewed before they reached <code>main</code>.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="scenario" id="scenario">
+        <h2>At work</h2>
+        <p>Five developers work on the same website. Without Git, they email zip files around, and on Friday someone's changes silently overwrite someone else's.</p>
+        <p>With Git and GitHub, each developer works on their own branch on their own laptop. When a feature is ready, they push the branch to GitHub and open a pull request. A teammate reviews it, asks for one fix, then approves. The branch is merged into <code>main</code>, and the site deploys from <code>main</code>. If something breaks, the team can see exactly which commit caused it and undo just that commit.</p>
+      </section>
+
+      <section class="mistakes" id="mistakes">
+        <h2>Common mistakes</h2>
+        <div class="mistake">
+          <p class="bad">Thinking Git and GitHub are the same thing.</p>
+          <p class="fix">Git is the tool on your computer. GitHub is one website that hosts Git repos. You can use Git for years without ever touching GitHub.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Thinking Git saves your work automatically, like Google Docs.</p>
+          <p class="fix">Saving a file in your editor is not a commit. Git records history only when you run <code>git commit</code>.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Running Git commands in the wrong folder and getting "not a git repository".</p>
+          <p class="fix">Move into the project folder first with <code>cd</code>. Run <code>pwd</code> to check where you are.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Putting passwords or API keys in a repo that is pushed to a public GitHub repository.</p>
+          <p class="fix">Anyone can read a public repo, including its history. Keep secrets out of Git from day one. Module 12 shows how to use <code>.gitignore</code> for this.</p>
+        </div>
+      </section>
+
+      <section class="quiz" id="quiz">
+        <h2>Quick quiz</h2>
+        <details>
+          <summary>Can you use Git with no internet and no GitHub account?</summary>
+          <p>Yes. Git runs entirely on your computer. You only need GitHub (or another host) to share your work with others.</p>
+        </details>
+        <details>
+          <summary>Which three places does a change move through?</summary>
+          <p>Working directory → staging area (with <code>git add</code>) → repository (with <code>git commit</code>).</p>
+        </details>
+        <details>
+          <summary>What is <code>main</code>, and why does this website care about it?</summary>
+          <p><code>main</code> is the default, official branch. This site is published from <code>main</code> only, so a lesson appears online only after its branch is merged into <code>main</code>.</p>
+        </details>
+      </section>
+
+      <section class="summary" id="summary">
+        <h2>Summary</h2>
+        <ul>
+          <li>Version control records every change, so you can see history and go back.</li>
+          <li>Git is the tool on your computer. GitHub is a website for sharing and teamwork.</li>
+          <li>A change moves: working directory → staging area → repository.</li>
+          <li>A commit is a snapshot. A branch is a separate line of work. <code>main</code> is the official branch.</li>
+        </ul>
+      </section>
+
+      <nav class="module-nav" id="module-nav" aria-label="Module navigation"></nav>
+    </main>
+  </div>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="../assets/js/modules.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
