@@ -40,7 +40,7 @@ window.MODULES = [
     title: "Undo changes: restore, reset, revert",
     level: "Beginner",
     minutes: 25,
-    status: "soon"
+    status: "ready"
   },
   {
     id: "05",

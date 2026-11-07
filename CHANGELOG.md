@@ -6,6 +6,7 @@ Format: `- <what changed> (<branch name>)`
 
 ## Unreleased
 
+- Module 04: Undo changes: restore, reset, revert (module/04-undo)
 - Module 02: Install and set up Git (module/02-setup)
 - Fix: newly merged modules appear right away instead of after a 10-minute cache (fix/fresh-module-registry)
 - Module 01: What is Git and GitHub (module/01-intro)
