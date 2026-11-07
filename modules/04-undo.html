@@ -53,20 +53,63 @@
       <!-- 3. CONCEPT: plain-language explanation + at least one diagram -->
       <section class="concept" id="concept">
         <h2>The idea</h2>
-        <p>Explain the concept as if to a friend who has never used Git.</p>
+        <p>There is no single "undo" in Git. The right command depends on <strong>where the mistake is now</strong>, and on whether you have already <strong>pushed</strong> it.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>The mistake is…</th><th>Use</th><th>OK after push?</th></tr></thead>
+            <tbody>
+              <tr><td>An edit in a file, not staged</td><td><code>git restore &lt;file&gt;</code></td><td>(nothing was shared)</td></tr>
+              <tr><td>Staged by accident</td><td><code>git restore --staged &lt;file&gt;</code></td><td>(nothing was shared)</td></tr>
+              <tr><td>In your last commit, not pushed</td><td><code>git commit --amend</code></td><td>No: it replaces the commit</td></tr>
+              <tr><td>In a commit already pushed</td><td><code>git revert &lt;id&gt;</code></td><td><strong>Yes</strong>: it adds a new commit</td></tr>
+              <tr><td>In local commits you want gone</td><td><code>git reset HEAD~1</code></td><td>No: it rewrites history</td></tr>
+            </tbody>
+          </table>
+        </div>
 <pre class="graph">
-<span class="m">main</span>    A───B───C
-                 \
-<span class="b">feature</span>           D───E   <span class="h">← HEAD</span>
+  before        A───B───C            <span class="m">main</span>
+
+  git revert C  A───B───C───C'       <span class="d">C' undoes C, history kept: safe</span>
+  git reset B   A───B                <span class="d">C removed: only before you push</span>
 </pre>
+        <p><code>git reset</code> has three strengths. All of them undo the commit. They differ in what happens to your changes:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Flag</th><th>Staging area</th><th>Your files</th></tr></thead>
+            <tbody>
+              <tr><td><code>--soft</code></td><td>Changes stay staged</td><td>Kept</td></tr>
+              <tr><td><code>--mixed</code> (default)</td><td>Cleared</td><td>Kept</td></tr>
+              <tr><td><code>--hard</code></td><td>Cleared</td><td><strong>Thrown away</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <!-- 4. COMMANDS: each command + one line explaining it -->
       <section class="commands" id="commands">
         <h2>Commands</h2>
         <div class="cmd-item">
-<pre class="cmd"><code>git example --flag</code></pre>
-          <p>What this command does, in one sentence.</p>
+<pre class="cmd"><code>git restore notes.md</code></pre>
+          <p>Throws away unstaged edits to a file and puts back the last saved version. Those edits are gone for good.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git restore --staged notes.md</code></pre>
+          <p>Takes a file out of staging. Your edits stay in the file.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git commit --amend -m "docs: better message"   <span class="c"># fix the last message</span>
+git add forgotten.md
+git commit --amend --no-edit                   <span class="c"># add a forgotten file to the last commit</span></code></pre>
+          <p>Replaces your last commit with a corrected one. Only do this before pushing.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git revert a1b2c3d --no-edit</code></pre>
+          <p>Makes a <em>new</em> commit that undoes commit <code>a1b2c3d</code>. History stays intact, so this is the safe choice for shared branches.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git reset --soft HEAD~1      <span class="c"># undo last commit, keep changes staged</span>
+git reset --hard HEAD~1      <span class="c"># undo last commit AND throw its changes away</span></code></pre>
+          <p><code>HEAD~1</code> means "one commit before where I am". Use <code>--hard</code> only when you are sure.</p>
         </div>
       </section>
 
