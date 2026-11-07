@@ -7,6 +7,13 @@
    - renders the roadmap + progress on the home page
    - adds a Copy button to every <pre class="cmd">
    - dark mode toggle and "mark as done" (saved in this browser only)
+
+   It loads assets/js/modules.js itself, with a fresh URL on every
+   visit. GitHub Pages lets browsers cache files for 10 minutes,
+   which would otherwise hide a module for 10 minutes after merging.
+
+   When you change THIS file, bump the ?v= number on its <script>
+   tag in index.html, modules/_template.html and every module page.
    ========================================================= */
 (function () {
   "use strict";
@@ -16,7 +23,7 @@
   var KEY_THEME = "gzp-theme";
   var LEVELS = ["Beginner", "Intermediate", "Advanced", "Pro", "Reference"];
 
-  var modules = window.MODULES || [];
+  var modules = [];
   var body = document.body;
   var root = body.getAttribute("data-root") || ".";
   var currentId = body.getAttribute("data-module");
@@ -249,12 +256,22 @@
     });
   }
 
-  renderHeader();
-  renderFooter();
-  renderSidebar();
-  renderEyebrow();
-  renderModuleNav();
-  renderRoadmap();
-  addCopyButtons();
-  wireRepoLinks();
+  function start() {
+    modules = window.MODULES || [];
+    renderHeader();
+    renderFooter();
+    renderSidebar();
+    renderEyebrow();
+    renderModuleNav();
+    renderRoadmap();
+    addCopyButtons();
+    wireRepoLinks();
+  }
+
+  /* Load the module registry fresh (never from the browser cache). */
+  var registry = document.createElement("script");
+  registry.src = root + "/assets/js/modules.js?t=" + Date.now();
+  registry.onload = start;
+  registry.onerror = start;
+  document.head.appendChild(registry);
 })();
