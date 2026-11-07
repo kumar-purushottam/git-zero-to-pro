@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>02 · Install and set up Git · Git Zero to Pro</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script>try{var t=localStorage.getItem("gzp-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-root=".." data-module="02">
+  <header class="site-header" id="site-header"></header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="content">
+      <header class="module-header">
+        <p class="eyebrow" data-auto></p>
+        <h1>Install and set up Git</h1>
+        <p class="lead">Install Git, tell it who you are, and connect your computer to GitHub so you can push your work.</p>
+      </header>
+
+      <section class="goals" id="goals">
+        <h2>Learning goals</h2>
+        <ul>
+          <li>Install Git on Linux, macOS or Windows</li>
+          <li>Set your name and email so every commit shows who made it</li>
+          <li>Make <code>main</code> the default branch name and pick an editor</li>
+          <li>Understand the three config levels: system, global and local</li>
+          <li>Connect your computer to GitHub with <code>gh auth login</code> or an SSH key</li>
+        </ul>
+      </section>
+
+      <section class="concept" id="concept">
+        <h2>The idea</h2>
+        <p>You install Git <strong>once per computer</strong>. Then you set it up once, and those settings apply to every project on that computer. Setup has two parts: telling Git <em>who you are</em>, and proving to GitHub that <em>you are allowed to push</em>.</p>
+
+        <h3>Your identity is stamped on every commit</h3>
+        <p>Every commit records an author name and email. Git takes them from your settings, <code>user.name</code> and <code>user.email</code>. GitHub uses the email to link a commit to your account and show your profile picture next to it.</p>
+<pre class="graph">
+commit <span class="h">5359e52</span>
+Author: <span class="b">Your Name &lt;you@example.com&gt;</span>   <span class="d">◄ from user.name + user.email</span>
+Date:   Sat Nov 7 10:52:00 2026
+
+    fix(js): load module registry fresh
+</pre>
+        <p class="tip">Want to keep your real email private? On GitHub, go to <strong>Settings → Emails</strong> and turn on "Keep my email addresses private". GitHub then gives you an address like <code>12345678+username@users.noreply.github.com</code>. Use that as your <code>user.email</code>.</p>
+
+        <h3>Three levels of settings</h3>
+        <p>Git reads settings from three places. If the same setting is in more than one place, the <strong>closest one wins</strong>:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Level</th><th>Applies to</th><th>Saved in</th></tr></thead>
+            <tbody>
+              <tr><td><code>--system</code></td><td>Every user on this computer</td><td><code>/etc/gitconfig</code></td></tr>
+              <tr><td><code>--global</code></td><td>You, in every repo</td><td><code>~/.gitconfig</code></td></tr>
+              <tr><td><code>--local</code></td><td>One repo only (this beats the others)</td><td><code>.git/config</code> inside that repo</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Most of the time you only use <code>--global</code>. Use <code>--local</code> when one project needs something different, like your work email in a company repo.</p>
+
+        <h3>Proving who you are to GitHub</h3>
+        <p>Anyone can <em>read</em> a public repo, but only allowed people can <em>push</em> to it. GitHub stopped accepting account passwords for <code>git push</code> in 2021. You need one of these instead:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>HTTPS + token</th><th>SSH key</th></tr></thead>
+            <tbody>
+              <tr><td>Repo URL looks like</td><td><code>https://github.com/user/repo.git</code></td><td><code>git@github.com:user/repo.git</code></td></tr>
+              <tr><td>Easiest setup</td><td><code>gh auth login</code> does it all</td><td>Make a key, paste the public half into GitHub</td></tr>
+              <tr><td>Good for</td><td>Beginners, locked-down networks</td><td>Daily work, many repos</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>An SSH key comes in two halves. The <strong>private key</strong> stays on your computer forever, like a house key. The <strong>public key</strong> (the file ending in <code>.pub</code>) goes to GitHub, like a lock that only your key opens.</p>
+      </section>
+
+      <section class="commands" id="commands">
+        <h2>Commands</h2>
+
+        <h3>Install</h3>
+        <div class="cmd-item">
+<pre class="cmd"><code>sudo apt update &amp;&amp; sudo apt install git     <span class="c"># Ubuntu / Debian</span>
+sudo dnf install git                         <span class="c"># Fedora</span>
+xcode-select --install                       <span class="c"># macOS (or: brew install git)</span></code></pre>
+          <p>On Windows, download <strong>Git for Windows</strong> from git-scm.com and run the installer. It includes <strong>Git Bash</strong>, a terminal where every command in this course works.</p>
+        </div>
+
+        <h3>Tell Git who you are</h3>
+        <div class="cmd-item">
+<pre class="cmd"><code>git config --global user.name "Your Name"
+git config --global user.email "you@example.com"</code></pre>
+          <p>Sets the name and email stamped on every commit you make on this computer.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git config --global init.defaultBranch main</code></pre>
+          <p>New repos start on a branch called <code>main</code>, which matches GitHub.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git config --global core.editor "nano"         <span class="c"># or: "code --wait" for VS Code</span></code></pre>
+          <p>The editor Git opens when it needs you to type a message. Without this, Git may open Vim, which confuses many beginners.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git config --global pull.rebase false</code></pre>
+          <p>Makes <code>git pull</code> combine changes with a merge, which is what this course uses. Without it, newer Git versions stop and ask you to choose.</p>
+        </div>
+
+        <h3>Check your settings</h3>
+        <div class="cmd-item">
+<pre class="cmd"><code>git config --list --show-origin     <span class="c"># every setting, and which file it came from</span>
+git config user.email               <span class="c"># the value Git will actually use here</span></code></pre>
+          <p>Use the second form when you're unsure which level is winning.</p>
+        </div>
+
+        <h3>Connect to GitHub</h3>
+        <div class="cmd-item">
+<pre class="cmd"><code>gh auth login</code></pre>
+          <p>Easiest path. Uses the GitHub CLI: pick GitHub.com → HTTPS → "Yes" to authenticate Git, then log in through your browser. After that, <code>git push</code> just works.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>ssh-keygen -t ed25519 -C "you@example.com"   <span class="c"># create a key pair (press Enter for defaults)</span>
+cat ~/.ssh/id_ed25519.pub                    <span class="c"># print the PUBLIC half, then copy it</span>
+ssh -T git@github.com                        <span class="c"># test the connection</span></code></pre>
+          <p>The SSH path. Paste the printed public key into GitHub under <strong>Settings → SSH and GPG keys → New SSH key</strong>, then run the test.</p>
+        </div>
+      </section>
+
+      <section class="lab" id="lab">
+        <h2>Hands-on lab</h2>
+        <p>These settings are real and stay on your computer. That's the point of this module.</p>
+        <ol class="steps">
+          <li>
+            Check that Git is installed. If you get "command not found", run the install command for your system first.
+<pre class="cmd"><code>git --version
+<span class="o">git version 2.43.0</span></code></pre>
+            <p class="expect">A version of 2.28 or newer (needed for <code>init.defaultBranch</code>).</p>
+          </li>
+          <li>
+            Set your identity, default branch, editor and pull behavior. Use your own name and email.
+<pre class="cmd"><code>git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+git config --global init.defaultBranch main
+git config --global core.editor "nano"
+git config --global pull.rebase false</code></pre>
+            <p class="expect">No output. Git only prints something when there is a problem.</p>
+          </li>
+          <li>
+            Read your settings back.
+<pre class="cmd"><code>git config --global --list
+<span class="o">user.name=Your Name</span>
+<span class="o">user.email=you@example.com</span>
+<span class="o">init.defaultbranch=main</span>
+<span class="o">core.editor=nano</span>
+<span class="o">pull.rebase=false</span></code></pre>
+            <p class="expect">Your five settings. Git shows setting names in lowercase, and that's fine.</p>
+          </li>
+          <li>
+            See the "closest wins" rule. Make a test repo and give it its own email.
+<pre class="cmd"><code>mkdir -p ~/git-playground/m02 &amp;&amp; cd ~/git-playground/m02
+git init -q
+git config user.email "work@company.com"      <span class="c"># no --global means local: this repo only</span>
+git config user.email
+<span class="o">work@company.com</span>
+git config --global user.email
+<span class="o">you@example.com</span></code></pre>
+            <p class="expect">Inside this repo Git uses the local email. Everywhere else it still uses your global one. (You'll learn <code>git init</code> properly in Module 03.)</p>
+          </li>
+          <li>
+            Connect to GitHub. Choose <strong>one</strong> path: run <code>gh auth login</code>, <em>or</em> create an SSH key and add it to GitHub as shown in Commands. Then test it.
+<pre class="cmd"><code>gh auth status                 <span class="c"># if you used gh</span>
+ssh -T git@github.com          <span class="c"># if you used SSH</span>
+<span class="o">Hi your-username! You've successfully authenticated, but GitHub does not provide shell access.</span></code></pre>
+            <p class="expect">"Logged in to github.com" from <code>gh</code>, or the "Hi your-username!" line from SSH. The first SSH connection asks you to trust GitHub's fingerprint. Compare it with the fingerprints listed in GitHub's docs, then type <code>yes</code>.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="scenario" id="scenario">
+        <h2>At work</h2>
+        <p>On your first day at a new job, you clone the company repo on your own laptop and push a fix. In the pull request your commit shows a grey, unknown avatar. Your global email is your personal Gmail, and the company's GitHub organization only knows your work email.</p>
+        <p>You fix it with a local setting inside the company repo: <code>git config user.email "you@company.com"</code>. Your commits there now show your work identity, and your personal projects keep your personal email. Many developers also keep their company repos in one folder, such as <code>~/work</code>, so this is easy to remember.</p>
+      </section>
+
+      <section class="mistakes" id="mistakes">
+        <h2>Common mistakes</h2>
+        <div class="mistake">
+          <p class="bad">Skipping <code>user.name</code> and <code>user.email</code>, then getting "Author identity unknown" on your first commit.</p>
+          <p class="fix">Run the two <code>git config --global user.*</code> commands once. The commit will work after that.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Typing your GitHub account password when <code>git push</code> asks for one, and getting "Support for password authentication was removed".</p>
+          <p class="fix">GitHub needs a token or an SSH key instead of your password. Run <code>gh auth login</code> once and it sets everything up.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Sharing the private key file (<code>id_ed25519</code>) instead of the public one.</p>
+          <p class="fix">Only ever copy the file ending in <code>.pub</code>. If a private key leaks, delete that key from GitHub right away and make a new pair.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">A typo in a setting name, like <code>git config --global user.mail …</code>. Git saves it without any warning.</p>
+          <p class="fix">Check with <code>git config --global --list</code>. Remove the wrong one with <code>git config --global --unset user.mail</code>.</p>
+        </div>
+      </section>
+
+      <section class="quiz" id="quiz">
+        <h2>Quick quiz</h2>
+        <details>
+          <summary>Where does <code>git config --global</code> save your settings?</summary>
+          <p>In <code>~/.gitconfig</code>, a file in your home folder. Every repo you work on reads it.</p>
+        </details>
+        <details>
+          <summary>A repo has a local <code>user.email</code> and you also have a global one. Which does Git use in that repo?</summary>
+          <p>The local one. The closest level wins: local beats global, and global beats system.</p>
+        </details>
+        <details>
+          <summary>Which SSH key file do you paste into GitHub?</summary>
+          <p>The public key, the file ending in <code>.pub</code> (for example <code>~/.ssh/id_ed25519.pub</code>). The private key never leaves your computer.</p>
+        </details>
+      </section>
+
+      <section class="summary" id="summary">
+        <h2>Summary</h2>
+        <ul>
+          <li>Install Git once per computer and check it with <code>git --version</code>.</li>
+          <li>Set <code>user.name</code> and <code>user.email</code>. They are stamped on every commit.</li>
+          <li>Settings live at three levels. Local beats global, and global beats system.</li>
+          <li>GitHub needs a token (<code>gh auth login</code>) or an SSH key to push. Never your password.</li>
+        </ul>
+      </section>
+
+      <nav class="module-nav" id="module-nav" aria-label="Module navigation"></nav>
+    </main>
+  </div>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="../assets/js/main.js?v=2"></script>
+</body>
+</html>

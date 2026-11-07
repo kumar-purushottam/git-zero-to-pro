@@ -24,7 +24,7 @@ window.MODULES = [
     title: "Install and set up Git",
     level: "Beginner",
     minutes: 20,
-    status: "soon"
+    status: "ready"
   },
   {
     id: "03",
