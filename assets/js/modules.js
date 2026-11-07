@@ -16,7 +16,7 @@ window.MODULES = [
     title: "What is Git and GitHub",
     level: "Beginner",
     minutes: 15,
-    status: "soon"
+    status: "ready"
   },
   {
     id: "02",
