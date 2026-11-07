@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 1. Replace NN and the title -->
+  <title>04 · Undo changes: restore, reset, revert · Git Zero to Pro</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script>try{var t=localStorage.getItem("gzp-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<!--
+  MODULE TEMPLATE. Owned by the main model.
+  How to use (contributors):
+    cp modules/_template.html modules/NN-your-slug.html
+  Then:
+    - set data-module="04" below (must match the id in assets/js/modules.js)
+    - fill EVERY section, keeping their order, ids and classes
+    - delete these instruction comments when done
+  Available building blocks (styled by style.css, do not add <style> tags):
+    <pre class="cmd"><code>git status</code></pre>      command block (gets a Copy button)
+      inside it: <span class="c"># comment</span>        dim comment
+                 <span class="o">sample output</span>     output line (not copied)
+    <pre class="graph"> ... </pre>                        commit-graph diagram
+      inside it: <span class="m">main</span> <span class="b">branch</span> <span class="h">HEAD</span> <span class="d">note</span>
+    <p class="tip">...</p>   <p class="warn">...</p>     callouts
+    <p class="expect">...</p>                              "You should see →" line in the lab
+    <div class="table-wrap"><table>...</table></div>       tables
+-->
+<body data-root=".." data-module="NN">
+  <header class="site-header" id="site-header"></header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="content">
+      <header class="module-header">
+        <p class="eyebrow" data-auto></p>
+        <h1>Undo changes: restore, reset, revert</h1>
+        <p class="lead">Made a mistake? Pick the right undo for where the mistake is right now: in your files, in staging, or in a commit.</p>
+      </header>
+
+      <!-- 2. GOALS: 3–5 concrete outcomes -->
+      <section class="goals" id="goals">
+        <h2>Learning goals</h2>
+        <ul>
+          <li>Throw away edits you haven't staged with <code>git restore</code></li>
+          <li>Unstage a file with <code>git restore --staged</code></li>
+          <li>Fix your last commit with <code>git commit --amend</code></li>
+          <li>Undo a commit safely with <code>git revert</code>, and know when <code>git reset</code> is dangerous</li>
+        </ul>
+      </section>
+
+      <!-- 3. CONCEPT: plain-language explanation + at least one diagram -->
+      <section class="concept" id="concept">
+        <h2>The idea</h2>
+        <p>Explain the concept as if to a friend who has never used Git.</p>
+<pre class="graph">
+<span class="m">main</span>    A───B───C
+                 \
+<span class="b">feature</span>           D───E   <span class="h">← HEAD</span>
+</pre>
+      </section>
+
+      <!-- 4. COMMANDS: each command + one line explaining it -->
+      <section class="commands" id="commands">
+        <h2>Commands</h2>
+        <div class="cmd-item">
+<pre class="cmd"><code>git example --flag</code></pre>
+          <p>What this command does, in one sentence.</p>
+        </div>
+      </section>
+
+      <!-- 5. LAB: steps the learner runs in a throwaway folder -->
+      <section class="lab" id="lab">
+        <h2>Hands-on lab</h2>
+        <p>Work in a scratch folder so experiments never touch a real project.</p>
+        <ol class="steps">
+          <li>
+            Step description.
+<pre class="cmd"><code>mkdir -p ~/git-playground &amp;&amp; cd ~/git-playground</code></pre>
+            <p class="expect">What the learner should see.</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- 6. AT WORK: how this shows up in a real team -->
+      <section class="scenario" id="scenario">
+        <h2>At work</h2>
+        <p>A short, realistic story: "Your teammate…, so you…"</p>
+      </section>
+
+      <!-- 7. MISTAKES: 2–4 common mistakes with fixes -->
+      <section class="mistakes" id="mistakes">
+        <h2>Common mistakes</h2>
+        <div class="mistake">
+          <p class="bad">What people get wrong.</p>
+          <p class="fix">How to fix or avoid it.</p>
+        </div>
+      </section>
+
+      <!-- 8. QUIZ: exactly 3 questions -->
+      <section class="quiz" id="quiz">
+        <h2>Quick quiz</h2>
+        <details>
+          <summary>Question one?</summary>
+          <p>Answer one.</p>
+        </details>
+        <details>
+          <summary>Question two?</summary>
+          <p>Answer two.</p>
+        </details>
+        <details>
+          <summary>Question three?</summary>
+          <p>Answer three.</p>
+        </details>
+      </section>
+
+      <!-- 9. SUMMARY: 3–5 bullets -->
+      <section class="summary" id="summary">
+        <h2>Summary</h2>
+        <ul>
+          <li>Key point one</li>
+          <li>Key point two</li>
+        </ul>
+      </section>
+
+      <nav class="module-nav" id="module-nav" aria-label="Module navigation"></nav>  <!-- filled by main.js -->
+    </main>
+  </div>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="../assets/js/main.js?v=2"></script>
+</body>
+</html>
