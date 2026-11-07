@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>03 · Your first repo: init, add, commit · Git Zero to Pro</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script>try{var t=localStorage.getItem("gzp-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-root=".." data-module="03">
+  <header class="site-header" id="site-header"></header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="content">
+      <header class="module-header">
+        <p class="eyebrow" data-auto></p>
+        <h1>Your first repo: init, add, commit</h1>
+        <p class="lead">Create a repository, save your first snapshots, and read the history. These are the commands you'll use every single day.</p>
+      </header>
+
+      <section class="goals" id="goals">
+        <h2>Learning goals</h2>
+        <ul>
+          <li>Turn any folder into a repository with <code>git init</code></li>
+          <li>Read <code>git status</code> and know what each file state means</li>
+          <li>Choose changes with <code>git add</code> and save them with <code>git commit</code></li>
+          <li>See exactly what changed with <code>git diff</code></li>
+          <li>Read the history with <code>git log</code> and write commit messages people can understand</li>
+        </ul>
+      </section>
+
+      <section class="concept" id="concept">
+        <h2>The idea</h2>
+        <p><code>git init</code> creates a hidden folder called <code>.git</code> inside your project. <strong>That hidden folder is the repository.</strong> It holds every snapshot and every branch. Your files stay where they are. If you delete <code>.git</code>, your files remain but all the history is gone.</p>
+
+        <h3>The life of a file</h3>
+        <p>Git puts every file in one of four states. You move files between states with two commands:</p>
+<pre class="graph">
+  untracked ──git add──► <span class="b">staged</span> ──git commit──► <span class="m">committed</span>
+                           ▲                        │
+                           │ git add                │ you edit the file
+                           │                        ▼
+                           └─────────────────── <span class="h">modified</span>
+</pre>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>State</th><th>Meaning</th><th>In <code>git status -s</code></th></tr></thead>
+            <tbody>
+              <tr><td>Untracked</td><td>A new file Git has never saved</td><td><code>??</code></td></tr>
+              <tr><td>Staged</td><td>Picked for the next commit</td><td><code>A&nbsp;</code> (new) or <code>M&nbsp;</code> (changed)</td></tr>
+              <tr><td>Committed</td><td>Saved in history and unchanged since</td><td>(not listed)</td></tr>
+              <tr><td>Modified</td><td>Changed since the last commit, not yet staged</td><td><code>&nbsp;M</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Why have a staging step at all? It lets you <strong>choose</strong>. If you fixed a bug and also tidied an unrelated file, you can stage only the bug fix and commit it with its own message. Then commit the tidy-up separately.</p>
+
+        <h3>What a commit really is</h3>
+<pre class="graph">
+  <span class="h">a1b2c3d</span>    <span class="d">◄ ID: a unique fingerprint for this snapshot</span>
+  Author     Your Name &lt;you@example.com&gt;
+  Date       Sat Nov 7 11:05 2026
+  Parent     9f8e7d6    <span class="d">◄ the commit that came before</span>
+  Message    docs: add first note
+  Snapshot   every tracked file, exactly as it was
+</pre>
+        <p>Because each commit points to its parent, commits form a chain. Your branch name, <code>main</code>, simply points at the newest one:</p>
+<pre class="graph">
+  9f8e7d6 ◄── a1b2c3d ◄── e4f5a6b   <span class="m">main</span> <span class="h">◄ HEAD (you are here)</span>
+</pre>
+
+        <h3>Commit messages people can read</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Bad</th><th>Good</th></tr></thead>
+            <tbody>
+              <tr><td><code>update</code></td><td><code>docs: add install steps for Windows</code></td></tr>
+              <tr><td><code>fix</code></td><td><code>fix(cart): stop total going below zero</code></td></tr>
+              <tr><td><code>asdf</code></td><td><code>feat(login): remember me checkbox</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Write the subject as a short command, under about 50 characters: "add", "fix", "remove", not "added" or "fixing". This project uses the <code>type(scope): what</code> style, called Conventional Commits.</p>
+      </section>
+
+      <section class="commands" id="commands">
+        <h2>Commands</h2>
+        <div class="cmd-item">
+<pre class="cmd"><code>git init</code></pre>
+          <p>Turns the current folder into a repository by creating the hidden <code>.git</code> folder.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git status          <span class="c"># full explanation of every file</span>
+git status -s       <span class="c"># short version: one line per file</span></code></pre>
+          <p>Shows what's untracked, modified and staged. Run it before and after everything else.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git add notes.md    <span class="c"># stage one file</span>
+git add .           <span class="c"># stage everything in this folder (check git status first!)</span>
+git add -p          <span class="c"># go through changes piece by piece: y = stage, n = skip</span></code></pre>
+          <p>Moves changes into the staging area, ready for the next commit.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git commit -m "docs: add notes file"</code></pre>
+          <p>Saves everything that's staged as one snapshot, with your message. Without <code>-m</code>, Git opens your editor so you can type the message.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git diff            <span class="c"># changes you have NOT staged yet</span>
+git diff --staged   <span class="c"># changes that WILL go into the next commit</span></code></pre>
+          <p>Shows changed lines: <code>+</code> for added, <code>-</code> for removed. Always check this before you commit.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git log                      <span class="c"># full history, newest first (press q to quit)</span>
+git log --oneline            <span class="c"># one line per commit</span>
+git show a1b2c3d             <span class="c"># one commit in detail, with its changes</span></code></pre>
+          <p>Reads the history. The 7-character IDs are enough to name any commit.</p>
+        </div>
+      </section>
+
+      <section class="lab" id="lab">
+        <h2>Hands-on lab</h2>
+        <p>You'll make a tiny repo with two commits. Your commit IDs will be different from the ones shown, and that's expected.</p>
+        <ol class="steps">
+          <li>
+            Create a folder and turn it into a repository.
+<pre class="cmd"><code>mkdir -p ~/git-playground/m03 &amp;&amp; cd ~/git-playground/m03
+git init
+<span class="o">Initialized empty Git repository in /home/you/git-playground/m03/.git/</span>
+ls -a
+<span class="o">.  ..  .git</span></code></pre>
+            <p class="expect">A hidden <code>.git</code> folder. That folder is your repository.</p>
+          </li>
+          <li>
+            Make a file and ask Git about it.
+<pre class="cmd"><code>echo "# My notes" &gt; notes.md
+git status -s
+<span class="o">?? notes.md</span></code></pre>
+            <p class="expect"><code>??</code> means untracked: Git sees the file but isn't saving it.</p>
+          </li>
+          <li>
+            Stage it, then commit it.
+<pre class="cmd"><code>git add notes.md
+git status -s
+<span class="o">A  notes.md</span>
+git commit -m "docs: add notes file"
+<span class="o">[main (root-commit) a1b2c3d] docs: add notes file</span>
+<span class="o"> 1 file changed, 1 insertion(+)</span></code></pre>
+            <p class="expect"><code>root-commit</code> means this is the very first commit, so it has no parent.</p>
+          </li>
+          <li>
+            Change the file and look at the difference.
+<pre class="cmd"><code>echo "Git saves snapshots, not just files." &gt;&gt; notes.md
+git status -s
+<span class="o"> M notes.md</span>
+git diff
+<span class="o">@@ -1 +1,2 @@</span>
+<span class="o"> # My notes</span>
+<span class="o">+Git saves snapshots, not just files.</span></code></pre>
+            <p class="expect"><code> M</code> (with a space first) means modified but not staged. The diff shows your new line with a <code>+</code>.</p>
+          </li>
+          <li>
+            Stage it, check what will be committed, and commit.
+<pre class="cmd"><code>git add notes.md
+git diff --staged
+git commit -m "docs: add first note"</code></pre>
+            <p class="expect"><code>git diff</code> is now empty, because everything is staged. <code>git diff --staged</code> shows the line instead.</p>
+          </li>
+          <li>
+            Read your history.
+<pre class="cmd"><code>git log --oneline
+<span class="o">e4f5a6b (HEAD -> main) docs: add first note</span>
+<span class="o">a1b2c3d docs: add notes file</span></code></pre>
+            <p class="expect">Two commits, newest at the top. <code>HEAD -> main</code> means you are on <code>main</code>, at its newest commit.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="scenario" id="scenario">
+        <h2>At work</h2>
+        <p>You're fixing a login bug. While you're in the code, you also rename a few variables in another file and leave a debug <code>print</code> behind. Before committing, you run <code>git status</code> and <code>git diff</code> and spot all three changes.</p>
+        <p>You remove the debug line, stage only the bug-fix file with <code>git add src/login.js</code>, and commit it as <code>fix(login): accept emails with capital letters</code>. Then you commit the rename separately. A week later the rename turns out to break a report. The team undoes just that one commit, and the bug fix stays. Small, focused commits made that possible.</p>
+      </section>
+
+      <section class="mistakes" id="mistakes">
+        <h2>Common mistakes</h2>
+        <div class="mistake">
+          <p class="bad">Running <code>git add .</code> without looking, and committing junk files, build output, or a file with passwords.</p>
+          <p class="fix">Run <code>git status</code> first and add files by name. Module 12 shows how <code>.gitignore</code> keeps junk out automatically.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Commit messages like "update", "changes" or "final". Nobody, including you next month, can tell what they did.</p>
+          <p class="fix">Say what changed and where: <code>fix(cart): stop total going below zero</code>.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Expecting <code>git commit</code> to include edits you didn't <code>git add</code>.</p>
+          <p class="fix">Only staged changes go into a commit. Check <code>git status</code> right before committing. Anything still listed as modified will be left out.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Running <code>git init</code> in your home folder by mistake, so every file you own looks "untracked".</p>
+          <p class="fix">Check where you are with <code>pwd</code> before <code>git init</code>. If it already happened, delete only that new <code>.git</code> folder, and double-check the path before you delete anything.</p>
+        </div>
+      </section>
+
+      <section class="quiz" id="quiz">
+        <h2>Quick quiz</h2>
+        <details>
+          <summary>You run <code>git add notes.md</code>, then edit notes.md again, then commit. What gets committed?</summary>
+          <p>The version from when you ran <code>git add</code>. The newer edit is still "modified". Run <code>git add</code> again to include it.</p>
+        </details>
+        <details>
+          <summary>What is the difference between <code>git diff</code> and <code>git diff --staged</code>?</summary>
+          <p><code>git diff</code> shows changes you have not staged yet. <code>git diff --staged</code> shows what is staged, which is exactly what the next commit will contain.</p>
+        </details>
+        <details>
+          <summary>What happens if you delete the <code>.git</code> folder?</summary>
+          <p>Your current files stay, but every commit, branch and bit of history is gone. The folder is no longer a repository.</p>
+        </details>
+      </section>
+
+      <section class="summary" id="summary">
+        <h2>Summary</h2>
+        <ul>
+          <li><code>git init</code> creates the <code>.git</code> folder, and that folder is the repository.</li>
+          <li>Files move: untracked or modified → <code>git add</code> → staged → <code>git commit</code> → committed.</li>
+          <li>Check before you commit with <code>git status</code> and <code>git diff --staged</code>.</li>
+          <li>Each commit has an ID, an author, a parent and a message. <code>git log --oneline</code> lists them.</li>
+          <li>Keep commits small and focused, and messages clear.</li>
+        </ul>
+      </section>
+
+      <nav class="module-nav" id="module-nav" aria-label="Module navigation"></nav>
+    </main>
+  </div>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="../assets/js/main.js?v=2"></script>
+</body>
+</html>
