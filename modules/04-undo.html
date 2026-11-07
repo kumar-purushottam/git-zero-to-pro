@@ -3,30 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- 1. Replace NN and the title -->
   <title>04 · Undo changes: restore, reset, revert · Git Zero to Pro</title>
   <link rel="stylesheet" href="../assets/css/style.css">
   <script>try{var t=localStorage.getItem("gzp-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 </head>
-<!--
-  MODULE TEMPLATE. Owned by the main model.
-  How to use (contributors):
-    cp modules/_template.html modules/NN-your-slug.html
-  Then:
-    - set data-module="04" below (must match the id in assets/js/modules.js)
-    - fill EVERY section, keeping their order, ids and classes
-    - delete these instruction comments when done
-  Available building blocks (styled by style.css, do not add <style> tags):
-    <pre class="cmd"><code>git status</code></pre>      command block (gets a Copy button)
-      inside it: <span class="c"># comment</span>        dim comment
-                 <span class="o">sample output</span>     output line (not copied)
-    <pre class="graph"> ... </pre>                        commit-graph diagram
-      inside it: <span class="m">main</span> <span class="b">branch</span> <span class="h">HEAD</span> <span class="d">note</span>
-    <p class="tip">...</p>   <p class="warn">...</p>     callouts
-    <p class="expect">...</p>                              "You should see →" line in the lab
-    <div class="table-wrap"><table>...</table></div>       tables
--->
-<body data-root=".." data-module="NN">
+<body data-root=".." data-module="04">
   <header class="site-header" id="site-header"></header>
 
   <div class="layout">
@@ -39,7 +20,6 @@
         <p class="lead">Made a mistake? Pick the right undo for where the mistake is right now: in your files, in staging, or in a commit.</p>
       </header>
 
-      <!-- 2. GOALS: 3–5 concrete outcomes -->
       <section class="goals" id="goals">
         <h2>Learning goals</h2>
         <ul>
@@ -50,7 +30,6 @@
         </ul>
       </section>
 
-      <!-- 3. CONCEPT: plain-language explanation + at least one diagram -->
       <section class="concept" id="concept">
         <h2>The idea</h2>
         <p>There is no single "undo" in Git. The right command depends on <strong>where the mistake is now</strong>, and on whether you have already <strong>pushed</strong> it.</p>
@@ -85,7 +64,6 @@
         </div>
       </section>
 
-      <!-- 4. COMMANDS: each command + one line explaining it -->
       <section class="commands" id="commands">
         <h2>Commands</h2>
         <div class="cmd-item">
@@ -113,61 +91,105 @@ git reset --hard HEAD~1      <span class="c"># undo last commit AND throw its ch
         </div>
       </section>
 
-      <!-- 5. LAB: steps the learner runs in a throwaway folder -->
       <section class="lab" id="lab">
         <h2>Hands-on lab</h2>
-        <p>Work in a scratch folder so experiments never touch a real project.</p>
+        <p>Use each undo command once in a throwaway repo.</p>
         <ol class="steps">
           <li>
-            Step description.
-<pre class="cmd"><code>mkdir -p ~/git-playground &amp;&amp; cd ~/git-playground</code></pre>
-            <p class="expect">What the learner should see.</p>
+            Set up a repo with one commit.
+<pre class="cmd"><code>mkdir -p ~/git-playground/m04 &amp;&amp; cd ~/git-playground/m04
+git init -q
+echo "line one" &gt; notes.md
+git add notes.md &amp;&amp; git commit -q -m "docs: add notes"</code></pre>
+            <p class="expect">No output (<code>-q</code> means quiet).</p>
+          </li>
+          <li>
+            Make a bad edit, then throw it away.
+<pre class="cmd"><code>echo "oops" &gt;&gt; notes.md
+git restore notes.md
+cat notes.md
+<span class="o">line one</span></code></pre>
+            <p class="expect">"oops" is gone.</p>
+          </li>
+          <li>
+            Stage something, then unstage it.
+<pre class="cmd"><code>echo "line two" &gt;&gt; notes.md
+git add notes.md
+git restore --staged notes.md
+git status -s
+<span class="o"> M notes.md</span></code></pre>
+            <p class="expect"><code> M</code>: still edited, but no longer staged.</p>
+          </li>
+          <li>
+            Commit with a typo, then fix the message.
+<pre class="cmd"><code>git add notes.md
+git commit -q -m "docs: add line tow"
+git commit -q --amend -m "docs: add line two"
+git log --oneline
+<span class="o">b7c8d9e (HEAD -> main) docs: add line two</span>
+<span class="o">a1b2c3d docs: add notes</span></code></pre>
+            <p class="expect">Still two commits. The typo commit was replaced, not added.</p>
+          </li>
+          <li>
+            Undo that commit the safe way.
+<pre class="cmd"><code>git revert HEAD --no-edit
+git log --oneline
+<span class="o">f0e1d2c (HEAD -> main) Revert "docs: add line two"</span>
+<span class="o">b7c8d9e docs: add line two</span>
+<span class="o">a1b2c3d docs: add notes</span></code></pre>
+            <p class="expect">A third commit that undoes the second one. Nothing was erased.</p>
           </li>
         </ol>
       </section>
 
-      <!-- 6. AT WORK: how this shows up in a real team -->
       <section class="scenario" id="scenario">
         <h2>At work</h2>
-        <p>A short, realistic story: "Your teammate…, so you…"</p>
+        <p>You merged a change to <code>main</code> that broke the checkout page, and three teammates have already pulled it. If you used <code>git reset</code> and force-pushed, their copies of <code>main</code> would no longer match GitHub's. Instead, you run <code>git revert &lt;id&gt;</code> and push. Everyone simply pulls the new "undo" commit, the site is fixed in minutes, and you fix the real bug calmly on a branch.</p>
       </section>
 
-      <!-- 7. MISTAKES: 2–4 common mistakes with fixes -->
       <section class="mistakes" id="mistakes">
         <h2>Common mistakes</h2>
         <div class="mistake">
-          <p class="bad">What people get wrong.</p>
-          <p class="fix">How to fix or avoid it.</p>
+          <p class="bad">Running <code>git reset --hard</code> with work you never committed. That work is lost.</p>
+          <p class="fix">Run <code>git status</code> first. If you want to keep the work, commit it or stash it (Module 11) before resetting.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Using <code>--amend</code> or <code>reset</code> on a commit you already pushed. Your history no longer matches GitHub's, and the next push is rejected.</p>
+          <p class="fix">Once a commit is pushed, undo it with <code>git revert</code>.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Running <code>git restore &lt;file&gt;</code> without checking first. It can't be undone.</p>
+          <p class="fix">Look at <code>git diff &lt;file&gt;</code> first, so you know exactly what you're throwing away.</p>
         </div>
       </section>
 
-      <!-- 8. QUIZ: exactly 3 questions -->
       <section class="quiz" id="quiz">
         <h2>Quick quiz</h2>
         <details>
-          <summary>Question one?</summary>
-          <p>Answer one.</p>
+          <summary>Your last commit message has a typo and you haven't pushed. What's the quickest fix?</summary>
+          <p><code>git commit --amend -m "the right message"</code></p>
         </details>
         <details>
-          <summary>Question two?</summary>
-          <p>Answer two.</p>
+          <summary>A bad commit is already on GitHub's <code>main</code> and teammates have pulled it. Which command?</summary>
+          <p><code>git revert &lt;id&gt;</code>. It adds an undo commit instead of rewriting history that others already have.</p>
         </details>
         <details>
-          <summary>Question three?</summary>
-          <p>Answer three.</p>
+          <summary>What does <code>git reset --soft HEAD~1</code> keep?</summary>
+          <p>All the changes from that commit, still staged. Only the commit itself is undone.</p>
         </details>
       </section>
 
-      <!-- 9. SUMMARY: 3–5 bullets -->
       <section class="summary" id="summary">
         <h2>Summary</h2>
         <ul>
-          <li>Key point one</li>
-          <li>Key point two</li>
+          <li>Unstaged edit: <code>git restore</code>. Staged by accident: <code>git restore --staged</code>.</li>
+          <li>Last commit, not pushed: <code>git commit --amend</code>.</li>
+          <li>Already pushed: <code>git revert</code>. It's safe because it adds a commit.</li>
+          <li><code>git reset</code> rewrites history. <code>--hard</code> also throws changes away.</li>
         </ul>
       </section>
 
-      <nav class="module-nav" id="module-nav" aria-label="Module navigation"></nav>  <!-- filled by main.js -->
+      <nav class="module-nav" id="module-nav" aria-label="Module navigation"></nav>
     </main>
   </div>
 
