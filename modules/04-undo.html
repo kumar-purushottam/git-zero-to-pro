@@ -130,13 +130,63 @@ git reset --hard HEAD~1      <span class="c"># undo last commit AND throw its ch
 
       <!-- 5. LAB: steps the learner runs in a throwaway folder -->
       <section class="lab" id="lab">
-        <h2>Hands-on lab</h2>
-        <p>Work in a scratch folder so experiments never touch a real project.</p>
+        <h2>Hands-on lab: rescue missions</h2>
+        <p>Each mission makes a small mistake on purpose. Your job is to rescue it with the right command from the chart above.</p>
         <ol class="steps">
           <li>
-            Step description.
-<pre class="cmd"><code>mkdir -p ~/git-playground &amp;&amp; cd ~/git-playground</code></pre>
-            <p class="expect">What the learner should see.</p>
+            <strong>Base camp.</strong> Set up a repo with one commit.
+<pre class="cmd"><code>mkdir -p ~/git-playground/m04 &amp;&amp; cd ~/git-playground/m04
+git init -q
+echo "line one" &gt; notes.md
+git add notes.md &amp;&amp; git commit -q -m "docs: add notes"</code></pre>
+            <p class="expect">No output (<code>-q</code> means quiet).</p>
+          </li>
+          <li>
+            <strong>Mission 1: the bad edit.</strong> Break the file, then rescue it.
+<pre class="cmd"><code>echo "oops" &gt;&gt; notes.md          <span class="c"># the mistake</span>
+git restore notes.md                <span class="c"># the rescue</span>
+cat notes.md
+<span class="o">line one</span></code></pre>
+            <p class="expect">"oops" is gone. Chart path: not in a commit → not staged.</p>
+          </li>
+          <li>
+            <strong>Mission 2: staged by accident.</strong> A secret file gets swept in by <code>git add .</code>
+<pre class="cmd"><code>echo "password=1234" &gt; secrets.txt
+git add .                           <span class="c"># the mistake</span>
+git status -s
+<span class="o">A  secrets.txt</span>
+git restore --staged secrets.txt    <span class="c"># the rescue</span>
+rm secrets.txt
+git status -s</code></pre>
+            <p class="expect">The last <code>git status -s</code> prints nothing. The secret was never committed.</p>
+          </li>
+          <li>
+            <strong>Mission 3: the typo commit.</strong> It's not pushed yet, so amend it.
+<pre class="cmd"><code>echo "line two" &gt;&gt; notes.md
+git commit -q -a -m "docs: add line tow"         <span class="c"># the mistake (-a stages changed tracked files)</span>
+git commit -q --amend -m "docs: add line two"    <span class="c"># the rescue</span>
+git log --oneline
+<span class="o">b7c8d9e (HEAD -> main) docs: add line two</span>
+<span class="o">a1b2c3d docs: add notes</span></code></pre>
+            <p class="expect">Still two commits. The typo commit was replaced, not added to.</p>
+          </li>
+          <li>
+            <strong>Mission 4: already pushed.</strong> Pretend "line two" is on GitHub and your teammates have it. Undo it safely.
+<pre class="cmd"><code>git revert HEAD --no-edit           <span class="c"># the rescue</span>
+cat notes.md
+<span class="o">line one</span></code></pre>
+            <p class="expect">The line is gone, and <code>git log --oneline</code> shows a new <code>Revert "docs: add line two"</code> commit. Nothing was erased.</p>
+          </li>
+          <li>
+            <strong>Mission 5: messy commits.</strong> Two "wip" commits, not pushed. Turn them into one clean commit.
+<pre class="cmd"><code>echo "a" &gt;&gt; notes.md &amp;&amp; git commit -q -a -m "wip 1"
+echo "b" &gt;&gt; notes.md &amp;&amp; git commit -q -a -m "wip 2"    <span class="c"># the mistake</span>
+git reset --soft HEAD~2             <span class="c"># the rescue: undo 2 commits, keep the changes staged</span>
+git commit -q -m "docs: add a and b"
+git log --oneline -2
+<span class="o">9a8b7c6 (HEAD -> main) docs: add a and b</span>
+<span class="o">f0e1d2c Revert "docs: add line two"</span></code></pre>
+            <p class="expect">One clean commit where there were two "wip" commits.</p>
           </li>
         </ol>
       </section>
