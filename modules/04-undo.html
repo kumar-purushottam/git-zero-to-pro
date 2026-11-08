@@ -43,6 +43,7 @@
       <section class="goals" id="goals">
         <h2>Learning goals</h2>
         <ul>
+          <li>Pick the right undo in seconds with one decision chart</li>
           <li>Throw away edits you haven't staged with <code>git restore</code></li>
           <li>Unstage a file with <code>git restore --staged</code></li>
           <li>Fix your last commit with <code>git commit --amend</code></li>
@@ -54,6 +55,20 @@
       <section class="concept" id="concept">
         <h2>The idea</h2>
         <p>There is no single "undo" in Git. The right command depends on <strong>where the mistake is now</strong>, and on whether you have already <strong>pushed</strong> it.</p>
+        <h3>Which undo do I need?</h3>
+        <p>Start at the top and follow your answers. You end at the right command.</p>
+<pre class="graph">
+  <span class="b">Is the mistake inside a commit?</span>
+  │
+  ├─ no ──► <span class="b">Is it staged?</span>
+  │          ├─ yes ─► git restore --staged &lt;file&gt;    <span class="d">staging undone, edits kept</span>
+  │          └─ no ──► git restore &lt;file&gt;             <span class="d">edits are thrown away</span>
+  │
+  └─ yes ─► <span class="b">Already pushed?</span>
+             ├─ no ──► git commit --amend             <span class="d">fix the last commit</span>
+             │         git reset --soft HEAD~1        <span class="d">or undo it, keep changes</span>
+             └─ yes ─► git revert &lt;id&gt;                <span class="d">safe: adds an undo commit</span>
+</pre>
         <div class="table-wrap">
           <table>
             <thead><tr><th>The mistake is…</th><th>Use</th><th>OK after push?</th></tr></thead>
