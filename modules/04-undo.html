@@ -3,30 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- 1. Replace NN and the title -->
   <title>04 · Undo changes: restore, reset, revert · Git Zero to Pro</title>
   <link rel="stylesheet" href="../assets/css/style.css">
   <script>try{var t=localStorage.getItem("gzp-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 </head>
-<!--
-  MODULE TEMPLATE. Owned by the main model.
-  How to use (contributors):
-    cp modules/_template.html modules/NN-your-slug.html
-  Then:
-    - set data-module="04" below (must match the id in assets/js/modules.js)
-    - fill EVERY section, keeping their order, ids and classes
-    - delete these instruction comments when done
-  Available building blocks (styled by style.css, do not add <style> tags):
-    <pre class="cmd"><code>git status</code></pre>      command block (gets a Copy button)
-      inside it: <span class="c"># comment</span>        dim comment
-                 <span class="o">sample output</span>     output line (not copied)
-    <pre class="graph"> ... </pre>                        commit-graph diagram
-      inside it: <span class="m">main</span> <span class="b">branch</span> <span class="h">HEAD</span> <span class="d">note</span>
-    <p class="tip">...</p>   <p class="warn">...</p>     callouts
-    <p class="expect">...</p>                              "You should see →" line in the lab
-    <div class="table-wrap"><table>...</table></div>       tables
--->
-<body data-root=".." data-module="NN">
+<body data-root=".." data-module="04">
   <header class="site-header" id="site-header"></header>
 
   <div class="layout">
@@ -39,7 +20,6 @@
         <p class="lead">Made a mistake? Pick the right undo for where the mistake is right now: in your files, in staging, or in a commit.</p>
       </header>
 
-      <!-- 2. GOALS: 3–5 concrete outcomes -->
       <section class="goals" id="goals">
         <h2>Learning goals</h2>
         <ul>
@@ -51,7 +31,6 @@
         </ul>
       </section>
 
-      <!-- 3. CONCEPT: plain-language explanation + at least one diagram -->
       <section class="concept" id="concept">
         <h2>The idea</h2>
         <p>There is no single "undo" in Git. The right command depends on <strong>where the mistake is now</strong>, and on whether you have already <strong>pushed</strong> it.</p>
@@ -100,7 +79,6 @@
         </div>
       </section>
 
-      <!-- 4. COMMANDS: each command + one line explaining it -->
       <section class="commands" id="commands">
         <h2>Commands</h2>
         <div class="cmd-item">
@@ -128,7 +106,6 @@ git reset --hard HEAD~1      <span class="c"># undo last commit AND throw its ch
         </div>
       </section>
 
-      <!-- 5. LAB: steps the learner runs in a throwaway folder -->
       <section class="lab" id="lab">
         <h2>Hands-on lab: rescue missions</h2>
         <p>Each mission makes a small mistake on purpose. Your job is to rescue it with the right command from the chart above.</p>
@@ -191,7 +168,6 @@ git log --oneline -2
         </ol>
       </section>
 
-      <!-- 6. AT WORK: how this shows up in a real team -->
       <section class="scenario" id="scenario">
         <h2>At work</h2>
         <p><strong>Morning.</strong> You commit a config change, then notice it includes a real API key. You haven't pushed. Following the chart (in a commit → not pushed), you run <code>git reset --soft HEAD~1</code>, remove the key, and commit again. The key never left your laptop.</p>
@@ -199,7 +175,6 @@ git log --oneline -2
         <p class="warn">If a secret was ever pushed, <code>git revert</code> does not remove it. It's still in the history. Treat it as leaked and replace the key right away.</p>
       </section>
 
-      <!-- 7. MISTAKES: 2–4 common mistakes with fixes -->
       <section class="mistakes" id="mistakes">
         <h2>Common mistakes</h2>
         <div class="mistake">
@@ -216,33 +191,33 @@ git log --oneline -2
         </div>
       </section>
 
-      <!-- 8. QUIZ: exactly 3 questions -->
       <section class="quiz" id="quiz">
         <h2>Quick quiz</h2>
         <details>
-          <summary>Question one?</summary>
-          <p>Answer one.</p>
+          <summary>You staged <code>secrets.txt</code> by accident. What do you run, and does it delete the file?</summary>
+          <p><code>git restore --staged secrets.txt</code>. The file is not deleted, only taken out of staging. Delete it yourself if you don't want it.</p>
         </details>
         <details>
-          <summary>Question two?</summary>
-          <p>Answer two.</p>
+          <summary>You made three small "wip" commits and haven't pushed. How do you turn them into one?</summary>
+          <p><code>git reset --soft HEAD~3</code>, then <code>git commit -m "…"</code>. The changes stay staged, so the new commit picks them all up.</p>
         </details>
         <details>
-          <summary>Question three?</summary>
-          <p>Answer three.</p>
+          <summary>A pushed commit broke <code>main</code>. Revert or reset?</summary>
+          <p>Revert. It adds a new commit that undoes the bad one, so teammates just pull. Reset would rewrite history they already have.</p>
         </details>
       </section>
 
-      <!-- 9. SUMMARY: 3–5 bullets -->
       <section class="summary" id="summary">
         <h2>Summary</h2>
         <ul>
-          <li>Key point one</li>
-          <li>Key point two</li>
+          <li>Ask two questions: is the mistake in a commit, and has it been pushed?</li>
+          <li>Not committed: <code>git restore</code>, or <code>git restore --staged</code> if it's staged.</li>
+          <li>Committed but not pushed: <code>git commit --amend</code> or <code>git reset --soft</code>.</li>
+          <li>Pushed: <code>git revert</code>, every time.</li>
         </ul>
       </section>
 
-      <nav class="module-nav" id="module-nav" aria-label="Module navigation"></nav>  <!-- filled by main.js -->
+      <nav class="module-nav" id="module-nav" aria-label="Module navigation"></nav>
     </main>
   </div>
 
