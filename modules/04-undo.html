@@ -194,15 +194,25 @@ git log --oneline -2
       <!-- 6. AT WORK: how this shows up in a real team -->
       <section class="scenario" id="scenario">
         <h2>At work</h2>
-        <p>A short, realistic story: "Your teammate…, so you…"</p>
+        <p><strong>Morning.</strong> You commit a config change, then notice it includes a real API key. You haven't pushed. Following the chart (in a commit → not pushed), you run <code>git reset --soft HEAD~1</code>, remove the key, and commit again. The key never left your laptop.</p>
+        <p><strong>Afternoon.</strong> A teammate's merged change breaks the build on <code>main</code>, and everyone has already pulled it. Chart: in a commit → pushed. You run <code>git revert &lt;id&gt;</code> and push. The build is green again within minutes, and nobody's history was rewritten.</p>
+        <p class="warn">If a secret was ever pushed, <code>git revert</code> does not remove it. It's still in the history. Treat it as leaked and replace the key right away.</p>
       </section>
 
       <!-- 7. MISTAKES: 2–4 common mistakes with fixes -->
       <section class="mistakes" id="mistakes">
         <h2>Common mistakes</h2>
         <div class="mistake">
-          <p class="bad">What people get wrong.</p>
-          <p class="fix">How to fix or avoid it.</p>
+          <p class="bad">Using <code>--amend</code> or <code>git reset</code> on a commit you already pushed.</p>
+          <p class="fix">Follow the chart. Once a commit is pushed, the answer is always <code>git revert</code>.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Running <code>git reset --hard</code> with work you never committed. That work is lost for good.</p>
+          <p class="fix">Run <code>git status</code> first. Commit or stash (Module 11) anything you want to keep.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Thinking <code>git revert</code> erases a pushed password or key.</p>
+          <p class="fix">Revert only adds an undo commit, so the secret stays in history. Replace the key immediately.</p>
         </div>
       </section>
 
