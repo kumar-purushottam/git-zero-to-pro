@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>04 · Undo changes: restore, reset, revert · Git Zero to Pro</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script>try{var t=localStorage.getItem("gzp-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+</head>
+<body data-root=".." data-module="04">
+  <header class="site-header" id="site-header"></header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="content">
+      <header class="module-header">
+        <p class="eyebrow" data-auto></p>
+        <h1>Undo changes: restore, reset, revert</h1>
+        <p class="lead">Made a mistake? Pick the right undo for where the mistake is right now: in your files, in staging, or in a commit.</p>
+      </header>
+
+      <section class="goals" id="goals">
+        <h2>Learning goals</h2>
+        <ul>
+          <li>Pick the right undo in seconds with one decision chart</li>
+          <li>Throw away edits you haven't staged with <code>git restore</code></li>
+          <li>Unstage a file with <code>git restore --staged</code></li>
+          <li>Fix your last commit with <code>git commit --amend</code></li>
+          <li>Undo a commit safely with <code>git revert</code>, and know when <code>git reset</code> is dangerous</li>
+        </ul>
+      </section>
+
+      <section class="concept" id="concept">
+        <h2>The idea</h2>
+        <p>There is no single "undo" in Git. The right command depends on <strong>where the mistake is now</strong>, and on whether you have already <strong>pushed</strong> it.</p>
+        <h3>Which undo do I need?</h3>
+        <p>Start at the top and follow your answers. You end at the right command.</p>
+<pre class="graph">
+  <span class="b">Is the mistake inside a commit?</span>
+  │
+  ├─ no ──► <span class="b">Is it staged?</span>
+  │          ├─ yes ─► git restore --staged &lt;file&gt;    <span class="d">staging undone, edits kept</span>
+  │          └─ no ──► git restore &lt;file&gt;             <span class="d">edits are thrown away</span>
+  │
+  └─ yes ─► <span class="b">Already pushed?</span>
+             ├─ no ──► git commit --amend             <span class="d">fix the last commit</span>
+             │         git reset --soft HEAD~1        <span class="d">or undo it, keep changes</span>
+             └─ yes ─► git revert &lt;id&gt;                <span class="d">safe: adds an undo commit</span>
+</pre>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>The mistake is…</th><th>Use</th><th>OK after push?</th></tr></thead>
+            <tbody>
+              <tr><td>An edit in a file, not staged</td><td><code>git restore &lt;file&gt;</code></td><td>(nothing was shared)</td></tr>
+              <tr><td>Staged by accident</td><td><code>git restore --staged &lt;file&gt;</code></td><td>(nothing was shared)</td></tr>
+              <tr><td>In your last commit, not pushed</td><td><code>git commit --amend</code></td><td>No: it replaces the commit</td></tr>
+              <tr><td>In a commit already pushed</td><td><code>git revert &lt;id&gt;</code></td><td><strong>Yes</strong>: it adds a new commit</td></tr>
+              <tr><td>In local commits you want gone</td><td><code>git reset HEAD~1</code></td><td>No: it rewrites history</td></tr>
+            </tbody>
+          </table>
+        </div>
+<pre class="graph">
+  before        A───B───C            <span class="m">main</span>
+
+  git revert C  A───B───C───C'       <span class="d">C' undoes C, history kept: safe</span>
+  git reset B   A───B                <span class="d">C removed: only before you push</span>
+</pre>
+        <p><code>git reset</code> has three strengths. All of them undo the commit. They differ in what happens to your changes:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Flag</th><th>Staging area</th><th>Your files</th></tr></thead>
+            <tbody>
+              <tr><td><code>--soft</code></td><td>Changes stay staged</td><td>Kept</td></tr>
+              <tr><td><code>--mixed</code> (default)</td><td>Cleared</td><td>Kept</td></tr>
+              <tr><td><code>--hard</code></td><td>Cleared</td><td><strong>Thrown away</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="commands" id="commands">
+        <h2>Commands</h2>
+        <div class="cmd-item">
+<pre class="cmd"><code>git restore notes.md</code></pre>
+          <p>Throws away unstaged edits to a file and puts back the last saved version. Those edits are gone for good.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git restore --staged notes.md</code></pre>
+          <p>Takes a file out of staging. Your edits stay in the file.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git commit --amend -m "docs: better message"   <span class="c"># fix the last message</span>
+git add forgotten.md
+git commit --amend --no-edit                   <span class="c"># add a forgotten file to the last commit</span></code></pre>
+          <p>Replaces your last commit with a corrected one. Only do this before pushing.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git revert a1b2c3d --no-edit</code></pre>
+          <p>Makes a <em>new</em> commit that undoes commit <code>a1b2c3d</code>. History stays intact, so this is the safe choice for shared branches.</p>
+        </div>
+        <div class="cmd-item">
+<pre class="cmd"><code>git reset --soft HEAD~1      <span class="c"># undo last commit, keep changes staged</span>
+git reset --hard HEAD~1      <span class="c"># undo last commit AND throw its changes away</span></code></pre>
+          <p><code>HEAD~1</code> means "one commit before where I am". Use <code>--hard</code> only when you are sure.</p>
+        </div>
+      </section>
+
+      <section class="lab" id="lab">
+        <h2>Hands-on lab: rescue missions</h2>
+        <p>Each mission makes a small mistake on purpose. Your job is to rescue it with the right command from the chart above.</p>
+        <ol class="steps">
+          <li>
+            <strong>Base camp.</strong> Set up a repo with one commit.
+<pre class="cmd"><code>mkdir -p ~/git-playground/m04 &amp;&amp; cd ~/git-playground/m04
+git init -q
+echo "line one" &gt; notes.md
+git add notes.md &amp;&amp; git commit -q -m "docs: add notes"</code></pre>
+            <p class="expect">No output (<code>-q</code> means quiet).</p>
+          </li>
+          <li>
+            <strong>Mission 1: the bad edit.</strong> Break the file, then rescue it.
+<pre class="cmd"><code>echo "oops" &gt;&gt; notes.md          <span class="c"># the mistake</span>
+git restore notes.md                <span class="c"># the rescue</span>
+cat notes.md
+<span class="o">line one</span></code></pre>
+            <p class="expect">"oops" is gone. Chart path: not in a commit → not staged.</p>
+          </li>
+          <li>
+            <strong>Mission 2: staged by accident.</strong> A secret file gets swept in by <code>git add .</code>
+<pre class="cmd"><code>echo "password=1234" &gt; secrets.txt
+git add .                           <span class="c"># the mistake</span>
+git status -s
+<span class="o">A  secrets.txt</span>
+git restore --staged secrets.txt    <span class="c"># the rescue</span>
+rm secrets.txt
+git status -s</code></pre>
+            <p class="expect">The last <code>git status -s</code> prints nothing. The secret was never committed.</p>
+          </li>
+          <li>
+            <strong>Mission 3: the typo commit.</strong> It's not pushed yet, so amend it.
+<pre class="cmd"><code>echo "line two" &gt;&gt; notes.md
+git commit -q -a -m "docs: add line tow"         <span class="c"># the mistake (-a stages changed tracked files)</span>
+git commit -q --amend -m "docs: add line two"    <span class="c"># the rescue</span>
+git log --oneline
+<span class="o">b7c8d9e (HEAD -> main) docs: add line two</span>
+<span class="o">a1b2c3d docs: add notes</span></code></pre>
+            <p class="expect">Still two commits. The typo commit was replaced, not added to.</p>
+          </li>
+          <li>
+            <strong>Mission 4: already pushed.</strong> Pretend "line two" is on GitHub and your teammates have it. Undo it safely.
+<pre class="cmd"><code>git revert HEAD --no-edit           <span class="c"># the rescue</span>
+cat notes.md
+<span class="o">line one</span></code></pre>
+            <p class="expect">The line is gone, and <code>git log --oneline</code> shows a new <code>Revert "docs: add line two"</code> commit. Nothing was erased.</p>
+          </li>
+          <li>
+            <strong>Mission 5: messy commits.</strong> Two "wip" commits, not pushed. Turn them into one clean commit.
+<pre class="cmd"><code>echo "a" &gt;&gt; notes.md &amp;&amp; git commit -q -a -m "wip 1"
+echo "b" &gt;&gt; notes.md &amp;&amp; git commit -q -a -m "wip 2"    <span class="c"># the mistake</span>
+git reset --soft HEAD~2             <span class="c"># the rescue: undo 2 commits, keep the changes staged</span>
+git commit -q -m "docs: add a and b"
+git log --oneline -2
+<span class="o">9a8b7c6 (HEAD -> main) docs: add a and b</span>
+<span class="o">f0e1d2c Revert "docs: add line two"</span></code></pre>
+            <p class="expect">One clean commit where there were two "wip" commits.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="scenario" id="scenario">
+        <h2>At work</h2>
+        <p><strong>Morning.</strong> You commit a config change, then notice it includes a real API key. You haven't pushed. Following the chart (in a commit → not pushed), you run <code>git reset --soft HEAD~1</code>, remove the key, and commit again. The key never left your laptop.</p>
+        <p><strong>Afternoon.</strong> A teammate's merged change breaks the build on <code>main</code>, and everyone has already pulled it. Chart: in a commit → pushed. You run <code>git revert &lt;id&gt;</code> and push. The build is green again within minutes, and nobody's history was rewritten.</p>
+        <p class="warn">If a secret was ever pushed, <code>git revert</code> does not remove it. It's still in the history. Treat it as leaked and replace the key right away.</p>
+      </section>
+
+      <section class="mistakes" id="mistakes">
+        <h2>Common mistakes</h2>
+        <div class="mistake">
+          <p class="bad">Using <code>--amend</code> or <code>git reset</code> on a commit you already pushed.</p>
+          <p class="fix">Follow the chart. Once a commit is pushed, the answer is always <code>git revert</code>.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Running <code>git reset --hard</code> with work you never committed. That work is lost for good.</p>
+          <p class="fix">Run <code>git status</code> first. Commit or stash (Module 11) anything you want to keep.</p>
+        </div>
+        <div class="mistake">
+          <p class="bad">Thinking <code>git revert</code> erases a pushed password or key.</p>
+          <p class="fix">Revert only adds an undo commit, so the secret stays in history. Replace the key immediately.</p>
+        </div>
+      </section>
+
+      <section class="quiz" id="quiz">
+        <h2>Quick quiz</h2>
+        <details>
+          <summary>You staged <code>secrets.txt</code> by accident. What do you run, and does it delete the file?</summary>
+          <p><code>git restore --staged secrets.txt</code>. The file is not deleted, only taken out of staging. Delete it yourself if you don't want it.</p>
+        </details>
+        <details>
+          <summary>You made three small "wip" commits and haven't pushed. How do you turn them into one?</summary>
+          <p><code>git reset --soft HEAD~3</code>, then <code>git commit -m "…"</code>. The changes stay staged, so the new commit picks them all up.</p>
+        </details>
+        <details>
+          <summary>A pushed commit broke <code>main</code>. Revert or reset?</summary>
+          <p>Revert. It adds a new commit that undoes the bad one, so teammates just pull. Reset would rewrite history they already have.</p>
+        </details>
+      </section>
+
+      <section class="summary" id="summary">
+        <h2>Summary</h2>
+        <ul>
+          <li>Ask two questions: is the mistake in a commit, and has it been pushed?</li>
+          <li>Not committed: <code>git restore</code>, or <code>git restore --staged</code> if it's staged.</li>
+          <li>Committed but not pushed: <code>git commit --amend</code> or <code>git reset --soft</code>.</li>
+          <li>Pushed: <code>git revert</code>, every time.</li>
+        </ul>
+      </section>
+
+      <nav class="module-nav" id="module-nav" aria-label="Module navigation"></nav>
+    </main>
+  </div>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="../assets/js/main.js?v=2"></script>
+</body>
+</html>
